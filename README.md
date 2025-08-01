@@ -107,7 +107,7 @@ pom.xml
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Roushan7970835758/SeleniumFrameworkDesign_TestNg_Cucumber.git
+   git clone https://github.com/Dholeabhishek/SeleniumFrameworkDesign_TestNg_Cucumber.git
    ```
 
 2. **Navigate to the project directory**:
