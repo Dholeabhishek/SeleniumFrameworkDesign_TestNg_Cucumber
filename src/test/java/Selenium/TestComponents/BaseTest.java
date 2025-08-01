@@ -15,6 +15,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.AfterMethod;
@@ -68,21 +69,33 @@ public class BaseTest {
 	    String browserName = System.getProperty("browser") != null ? System.getProperty("browser") : props.getProperty("browser");
 	    System.out.println("Browser name: " + browserName);
 
-	    switch (browserName.toLowerCase()) {
-	        case "chrome":
-	            WebDriverManager.chromedriver().setup();
-	            driver = new ChromeDriver();
-	            break;
-	        case "firefox":
-	            WebDriverManager.firefoxdriver().setup();
-	            driver = new FirefoxDriver();
-	            break;
-	        case "edge":
-	            WebDriverManager.edgedriver().setup();
-	            driver = new EdgeDriver();
-	            break;
-	        default:
-	            throw new IllegalArgumentException("Unsupported browser: " + browserName);
+	    if (browserName.equalsIgnoreCase("chrome")) {
+	        WebDriverManager.chromedriver().setup();
+
+	        ChromeOptions options = new ChromeOptions();
+
+	        // 🛑 Disable password manager popup
+	        options.setExperimentalOption("prefs", new HashMap<String, Object>() {{
+	            put("credentials_enable_service", false);
+	            put("profile.password_manager_enabled", false);
+	        }});
+
+	        // Other useful options
+	        options.addArguments("--incognito"); // Use incognito to avoid stored credentials
+	        options.addArguments("--disable-notifications");
+	        options.addArguments("--disable-infobars");
+	        options.addArguments("--disable-save-password-bubble");
+
+	        driver = new ChromeDriver(options);
+
+	    } else if (browserName.equalsIgnoreCase("firefox")) {
+	        WebDriverManager.firefoxdriver().setup();
+	        driver = new FirefoxDriver();
+	    } else if (browserName.equalsIgnoreCase("edge")) {
+	        WebDriverManager.edgedriver().setup();
+	        driver = new EdgeDriver();
+	    } else {
+	        throw new IllegalArgumentException("Unsupported browser: " + browserName);
 	    }
 
 	    driver.manage().window().maximize();
